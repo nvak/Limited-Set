@@ -4,10 +4,11 @@ import java.util.Objects;
 
 public class LimitedSetImpl<T> implements LimitedSet<T> {
     private static final int MAX_CAPACITY = 10;
-    private Node<T>[] elements = new Node[MAX_CAPACITY];
+    private Node<T>[] elements;
     private int elementsInArray;
 
     public LimitedSetImpl() {
+        elements = new Node[MAX_CAPACITY];
     }
 
     @Override
