@@ -1,10 +1,11 @@
 package promptlink;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class LimitedSetImpl<T> implements LimitedSet<T> {
     private static final int MAX_CAPACITY = 10;
-    private Node<T>[] elements;
+    private Node[] elements;
     private int elementsInArray;
 
     public LimitedSetImpl() {
@@ -14,7 +15,7 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
     @Override
     public void add(T elementToAdd) {
         if (elementsInArray < MAX_CAPACITY) {
-            elements[elementsInArray] = new Node<>(elementToAdd);
+            elements[elementsInArray] = new Node(elementToAdd);
             elementsInArray++;
         } else {
             int min = Integer.MAX_VALUE;
@@ -32,19 +33,29 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
 
     @Override
     public boolean remove(T elementToRemove) {
+        Object remove = null;
         int index = 0;
-        for (int i = 0; i < MAX_CAPACITY; i++) {
+        for (int i = 0; i < elementsInArray; i++) {
             if (Objects.equals(elements[i].getValue(), elementToRemove)) {
+                remove = elements[i].getValue();
                 index = i;
                 break;
             }
         }
-        Node<T>[] tail = getTail(elements, index);
-        Node<T>[] tempArray = new Node[MAX_CAPACITY];
+
+        if (remove == null) {
+            throw new NoSuchElementException("No such element in set");
+        }
+
+        Node[] tail = getTail(elements, index);
+        Node[] tempArray = new Node[MAX_CAPACITY];
+
         System.arraycopy(elements, 0, tempArray, 0, index);
+
         if (tail.length > 0) {
             System.arraycopy(tail, 1, tempArray, index, tail.length - 1);
         }
+
         elements = tempArray;
         elementsInArray--;
         return true;
@@ -52,7 +63,7 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
 
     @Override
     public boolean contains(T t) {
-        for (Node<T> element : elements) {
+        for (Node element : elements) {
             if (Objects.equals(element.getValue(), t)) {
                 element.setCount(element.getCount() + 1);
                 return true;
@@ -61,19 +72,19 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
         return false;
     }
 
-    private Node<T>[] getTail(Node<T>[] elements, int cutPosition) {
-        Node<T>[] tail = new Node[elementsInArray - cutPosition];
+    private Node[] getTail(Node[] elements, int cutPosition) {
+        Node[] tail = new Node[elementsInArray - cutPosition];
         if (elementsInArray - cutPosition >= 0) {
             System.arraycopy(elements, cutPosition, tail, 0, elementsInArray - cutPosition);
         }
         return tail;
     }
 
-    private static class Node<T> {
-        private T value;
+    private static class Node {
+        private Object value;
         private int count;
 
-        public Node(T value) {
+        public Node(Object value) {
             this.value = value;
         }
 
@@ -85,12 +96,11 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
             this.count = count;
         }
 
-
-        public T getValue() {
+        public Object getValue() {
             return value;
         }
 
-        public void setValue(T value) {
+        public void setValue(Object value) {
             this.value = value;
         }
     }
