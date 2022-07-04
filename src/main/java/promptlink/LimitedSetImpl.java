@@ -5,6 +5,7 @@ import java.util.Objects;
 
 public class LimitedSetImpl<T> implements LimitedSet<T> {
     private static final int MAX_CAPACITY = 10;
+    private static final int ZERO_COUNTER = 10;
     private Node[] elements;
     private int elementsInArray;
 
@@ -27,7 +28,7 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
                 }
             }
             elements[pos].setValue(elementToAdd);
-            elements[pos].setCount(0);
+            elements[pos].setCount(ZERO_COUNTER);
         }
     }
 
