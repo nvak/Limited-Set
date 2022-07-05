@@ -15,6 +15,9 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
 
     @Override
     public void add(T elementToAdd) {
+        if (contains(elementToAdd)){
+            return;
+        }
         if (elementsInArray < MAX_CAPACITY) {
             elements[elementsInArray] = new Node(elementToAdd);
             elementsInArray++;
@@ -64,9 +67,9 @@ public class LimitedSetImpl<T> implements LimitedSet<T> {
 
     @Override
     public boolean contains(T t) {
-        for (Node element : elements) {
-            if (Objects.equals(element.getValue(), t)) {
-                element.setCount(element.getCount() + 1);
+        for (int i = 0; i < elementsInArray; i++) {
+            if (Objects.equals(elements[i].getValue(), t)) {
+                elements[i].setCount(elements[i].getCount() + 1);
                 return true;
             }
         }
